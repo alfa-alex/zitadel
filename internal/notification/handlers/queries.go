@@ -24,6 +24,7 @@ type Queries interface {
 	SMTPConfigByAggregateID(ctx context.Context, aggregateID string) (*query.SMTPConfig, error)
 	GetDefaultLanguage(ctx context.Context) language.Tag
 	GetInstanceRestrictions(ctx context.Context) (restrictions query.Restrictions, err error)
+	OrgByID(ctx context.Context, shouldTriggerBulk bool, id string) (org *query.Org, err error)
 }
 
 type NotificationQueries struct {
