@@ -163,13 +163,17 @@ func (u *userNotifier) reduceInitCodeAdded(event eventstore.Event) (*handler.Sta
 		if err != nil {
 			return err
 		}
+		org, err := u.queries.OrgByID(ctx, false, e.Aggregate().ResourceOwner)
+		if err != nil {
+			return err
+		}
 
 		ctx, err = u.queries.Origin(ctx, e)
 		if err != nil {
 			return err
 		}
 		err = types.SendEmail(ctx, u.channels, string(template.Template), translator, notifyUser, colors, e).
-			SendUserInitCode(ctx, notifyUser, code)
+			SendUserInitCode(ctx, notifyUser, code, org.Name)
 		if err != nil {
 			return err
 		}

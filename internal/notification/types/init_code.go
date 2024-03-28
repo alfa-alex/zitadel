@@ -9,9 +9,10 @@ import (
 	"github.com/zitadel/zitadel/internal/query"
 )
 
-func (notify Notify) SendUserInitCode(ctx context.Context, user *query.NotifyUser, code string) error {
+func (notify Notify) SendUserInitCode(ctx context.Context, user *query.NotifyUser, code string, orgName string) error {
 	url := login.InitUserLink(http_utils.ComposedOrigin(ctx), user.ID, user.PreferredLoginName, code, user.ResourceOwner, user.PasswordSet)
 	args := make(map[string]interface{})
 	args["Code"] = code
+	args["Organization"] = orgName
 	return notify(url, args, domain.InitCodeMessageType, true)
 }
