@@ -12,6 +12,7 @@ import (
 	"github.com/muhlemmer/gu"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zitadel/zitadel/internal/test"
 
 	"github.com/zitadel/zitadel/internal/integration"
 	"github.com/zitadel/zitadel/pkg/grpc/org/v2"
@@ -127,6 +128,7 @@ func TestServer_AddOrganization(t *testing.T) {
 					{
 						UserType: &org.AddOrganizationRequest_Admin_Human{
 							Human: &user.AddHumanUserRequest{
+								UserId: test.PointerTo("abc123"),
 								Profile: &user.SetHumanProfile{
 									GivenName:  "firstname",
 									FamilyName: "lastname",
@@ -153,7 +155,7 @@ func TestServer_AddOrganization(t *testing.T) {
 				CreatedAdmins: []*org.AddOrganizationResponse_CreatedAdmin{
 					// a single admin is expected, because the first provided already exists
 					{
-						UserId: integration.NotEmpty,
+						UserId: "abc123",
 					},
 				},
 			},
@@ -191,6 +193,10 @@ func TestServer_AddOrganization(t *testing.T) {
 func assertCreatedAdmin(t *testing.T, expected, got *org.AddOrganizationResponse_CreatedAdmin) {
 	if expected.GetUserId() != "" {
 		assert.NotEmpty(t, got.GetUserId())
+
+		if expected.GetUserId() != integration.NotEmpty {
+			assert.Equal(t, expected.GetUserId(), got.GetUserId())
+		}
 	} else {
 		assert.Empty(t, got.GetUserId())
 	}
